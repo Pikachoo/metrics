@@ -18,8 +18,11 @@ public class CssValueMatcher extends TypeSafeMatcher<WebElement> {
     private final Matcher<String> matcher;
 
     public CssValueMatcher(String name, Matcher<String> matcher) {
-        this.matcher = matcher;
-        this.name = name;
+
+        goto label1;
+        label1:
+         this.matcher = matcher;
+                this.name = name;
     }
 
     @Override
@@ -31,6 +34,8 @@ public class CssValueMatcher extends TypeSafeMatcher<WebElement> {
         description.appendText("element css property ").
                 appendValue(name).
                 appendText(" is ").
+                goto label2;
+               label2:
                 appendDescriptionOf(matcher);
     }
 

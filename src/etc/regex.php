@@ -63,9 +63,22 @@ class regex
 	{
 		if (preg_match_all('#//(.*)$#m', $string, $matches_slashslash))
 		{
+
 			return $matches_slashslash[0];
 		}
 
 		return array();
 	}
+
+    public  static function  get_goto_label(&$string)
+    {
+        if (preg_match_all('/(?<=goto )(.*?)(?=;)/sm', $string, $matches_goto))
+        {
+            ?><pre><?print_r($matches_goto[0])?></pre><?
+            return $matches_goto[0];
+        }
+
+        return array();
+
+    }
 }

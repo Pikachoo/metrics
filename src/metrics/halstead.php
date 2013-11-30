@@ -2,7 +2,7 @@
 
 namespace rude;
 
-require_once ('/srv/http/rude-metrics/src/etc/lexer.php');
+require_once (getcwd() . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'lexer.php');
 
 class halstead
 {
@@ -38,6 +38,7 @@ class halstead
 
 		$this->file_data = regex::erase_comments($this->file_data);
 		$this->file_data = regex::erase_strings($this->file_data);
+		regex::get_goto_label($this->file_data);
 
 		$this->lexer = new lexer($this->file_data);
 
@@ -49,6 +50,7 @@ class halstead
 //		$this->CL  = $this->lexer->total_conditions();
 //		$this->cl  = round($this->lexer->total_conditions() / ($this->lexer->total_loops() + $this->lexer->total_conditions()), 2);
 //		$this->CLI = $this->lexer->total_max_depth();
+
 
 		$this->n1  = $this->unique_operators();
 		$this->n2  = $this->unique_operands();

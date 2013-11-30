@@ -4,18 +4,7 @@ namespace rude;
 
 require_once ('/srv/http/rude-metrics/src/etc/lexer.php');
 
-define('RUDE_RULE_STATEMENT_IF',      1);
-define('RUDE_RULE_STATEMENT_ELSE',    2);
-define('RUDE_RULE_STATEMENT_ELSE_IF', 3);
-define('RUDE_RULE_STATEMENT_TERNARY', 4);
 
-define('RUDE_RULE_LOOP_WHILE',        50);
-define('RUDE_RULE_LOOP_DO_WHILE',     51);
-
-define('RUDE_RULE_OPERATOR_PLUS',     100);
-define('RUDE_RULE_OPERATOR_MINUS',    101);
-define('RUDE_RULE_OPERATOR_PIPE',     102);
-define('RUDE_RULE_OPERATOR_PIPEPIPE', 103);
 
 class jilb
 {

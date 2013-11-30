@@ -2,7 +2,7 @@
 
 namespace rude;
 
-require_once ("./../etc/lexer.php");
+require_once (getcwd() . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'lexer.php');
 
 class chapin
 {

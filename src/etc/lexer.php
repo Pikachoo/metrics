@@ -2,6 +2,7 @@
 
 namespace rude;
 
+require_once ('defines.php');
 class lexer
 {
 	private $source;
@@ -79,6 +80,7 @@ class lexer
 		$this->conditions[] = array('else',    $this->count_tokens('else',    RUDE_RULE_STATEMENT_ELSE));
 		$this->conditions[] = array('else if', $this->count_tokens('else if', RUDE_RULE_STATEMENT_ELSE_IF));
 		$this->conditions[] = array('?:',      $this->count_tokens('?:',      RUDE_RULE_STATEMENT_TERNARY));
+		$this->conditions[] = array('case',    $this->count_tokens('case',    RUDE_RULE_STATEMENT_CASE));
 
 		foreach ($this->conditions as $condition)
 		{
@@ -282,6 +284,12 @@ class lexer
 			\* ============================== */
 			case RUDE_RULE_STATEMENT_TERNARY:
 				return lexer::count($this->tokens, '?');
+				break;
+			/* ============================== *\
+			 * `ternary if else` = count(`?`) *
+			\* ============================== */
+			case RUDE_RULE_STATEMENT_CASE:
+				return lexer::count($this->tokens, 'case');
 				break;
 
 			/* ============================== *\
