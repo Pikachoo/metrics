@@ -38,7 +38,9 @@ class halstead
 
 		$this->file_data = regex::erase_comments($this->file_data);
 		$this->file_data = regex::erase_strings($this->file_data);
-		regex::get_goto_label($this->file_data);
+
+//		regex::get_goto_whith_label($this->file_data);
+//		regex::get_label_list($this->file_data,'label1');
 
 		$this->lexer = new lexer($this->file_data);
 

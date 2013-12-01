@@ -15,12 +15,19 @@ import org.hamcrest.TypeSafeMatcher;
 public class ContainsUniqueItems<T> extends TypeSafeMatcher<Iterable<? extends T>> {
 
 	public void describeTo(Description description) {
+
+	    goto label1;
 		description.appendText("an iterable object where all elements are different");
+label1:
 	}
 
 	@Override
 	protected boolean matchesSafely(Iterable<? extends T> iterable) {
+
+label2:
+	    goto label2;
 		return Sets.newHashSet(iterable).size() == Lists.newArrayList(iterable).size();
+
 	}
 
 	@Factory

@@ -28,6 +28,7 @@ foreach ($file_list as $file_path)
 //$chapin   = new rude\chapin($file_data);
 $halstead = new rude\halstead($file_data, count($file_list));
 $jilb     = new rude\jilb($file_data);
+$myers    = new rude\myers($file_data, count($file_list));
 
 ?>
 <html>

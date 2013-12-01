@@ -174,6 +174,12 @@ class lexer
 
 		return $this->total_operators;
 	}
+
+	public function count_return()
+	{
+
+
+	}
 	
 	public function count_max_depth()
 	{
@@ -286,10 +292,17 @@ class lexer
 				return lexer::count($this->tokens, '?');
 				break;
 			/* ============================== *\
-			 * `ternary if else` = count(`?`) *
+			 * `case() = count(`case`) *
 			\* ============================== */
 			case RUDE_RULE_STATEMENT_CASE:
 				return lexer::count($this->tokens, 'case');
+				break;
+			/* ============================== *\
+			 * `return = count(`return`) *
+			\* ============================== */
+
+			case RUDE_RULE_STATEMENT_RETURN:
+				return lexer::count($this->tokens, 'return');
 				break;
 
 			/* ============================== *\
