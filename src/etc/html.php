@@ -38,26 +38,20 @@ class html
 		<?
 	}
 
-	public static function table_horizontal($cols, $rows)
+	public static function table_horizontal($cols)
 	{
 		?>
 		<table>
 			<tbody>
 			<tr>
-				<td>
-					<b><?= $rows[0] ?></b>
-				</td>
 				<?
 					foreach ($cols as $col)
 					{
-						?><td><?= $col[0] ?></td><?
+						?><th><?= $col[0] ?></th><?
 					}
 				?>
 			</tr>
 			<tr>
-				<td>
-					<b><?= $rows[1] ?></b>
-				</td>
 				<?
 					foreach ($cols as $col)
 					{

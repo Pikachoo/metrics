@@ -36,35 +36,37 @@ $myers    = new rude\myers($file_data, count($file_list));
 	</head>
 
 	<body>
-        <table>
-            <td>
-            <div id="container">
-                <h2>Список файлов</h2>
+        <div id = "main">
+            <table >
+                <td>
+                <div id="container">
+                    <h2>Список файлов</h2>
 
-                <label for="source"></label>
-                <textarea id="source"><? foreach ($file_list as $file_path) { echo $file_path . PHP_EOL; } ?></textarea>
-            </td>
-            <td>
-                <div id = "metrics">
+                    <label for="source"></label>
+                    <textarea id="source"><? foreach ($file_list as $file_path) { echo $file_path . PHP_EOL; } ?></textarea>
+                </td>
+                <td>
+                    <div id = "metrics">
 
-                    <div id="halstead">
-                        <a>Метрика Холстеда</a>
-                        <? rude\html::table_horizontal($halstead->get_metrics(), array('Перменная', 'Значение')) ?>
+                        <div id="halstead">
+                            <a>Метрика Холстеда</a>
+                            <? rude\html::table_horizontal($halstead->get_metrics(),array()) ?>
+                        </div>
+
+                        <div id="chapin">
+                            <a>Метрика Чепина</a>
+                            <? rude\html::table_horizontal($chapin_metrics) ?>
+                        </div>
+
+                        <div id="chapin">
+                            <a>Метрика Майерса</a>
+                            <? rude\html::table_horizontal($myers->get_metrics()) ?>
+                        </div>
                     </div>
+                </td>
 
-                    <div id="chapin">
-                        <a>Метрика Чепина</a>
-                        <? rude\html::table_horizontal($chapin_metrics, array('Переменная', 'Значение')) ?>
-                    </div>
-
-                    <div id="chapin">
-                        <a>Метрика Майерса</a>
-                        <? rude\html::table_horizontal($myers->get_metrics(),array('Переменная', 'Значение')) ?>
-                    </div>
                 </div>
-            </td>
-
-            </div>
-        </table>
+            </table>
+    </div>
 	</body>
 </html>

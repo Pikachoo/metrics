@@ -4,10 +4,26 @@ body
     font-size: 12px;
     color: #484848;
 }
+#main TABLE {
+    background: #6dc7dd; /* Цвет фона таблицы */
+    border: 5px double #753ddd; /* Рамка вокруг таблицы */
+}
+
+#metrics TABLE {
+    background: #cbc697; /* Цвет фона таблицы */
+    color: #1e1971; /* Цвет текста */
+}
+#metrics TD {
+    background: #9b8ea6; /* Цвет фона ячеек */
+}
+#metrics th {
+    background: #7cc488; /* Цвет фона ячеек */
+}
+
 
 table, td, th
 {
-    border: 1px solid #bbb;
+    border: 1px solid #7247B3;
     padding: 4px;
     text-align: center;
 
@@ -22,6 +38,8 @@ textarea
     margin-bottom: 5px;
     border: 1px solid #bbb;
     font-size: 10px;
+    background: #9b8ea6;
+    color: #1e1971;
 }
 #metrics td:nth-child(3)
 {
@@ -33,25 +51,25 @@ textarea
     font-weight: bold;
 }
 
-table
-{
-    border-collapse: collapse;
-    margin-bottom: 5px;
+/*table*/
+/*{*/
+    /*border-collapse: collapse;*/
+    /*margin-bottom: 5px;*/
 
-    display: table;
-    border-spacing: 2px;
-    border-color: gray;
+    /*display: table;*/
+    /*border-spacing: 2px;*/
+    /*border-color: gray;*/
 
-    float: left;
-    margin-right: 5px;
-}
+    /*float: left;*/
+    /*margin-right: 5px;*/
+/*}*/
 
-tr
-{
-    display: table-row;
-    vertical-align: inherit;
-    border-color: inherit;
-}
+/*tr*/
+/*{*/
+    /*display: table-row;*/
+    /*vertical-align: inherit;*/
+    /*border-color: inherit;*/
+/*}*/
 
 tbody
 {
