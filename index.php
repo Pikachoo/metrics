@@ -4,7 +4,7 @@ require_once 'src/rude-metrics.php';
 
 $filesystem = new rude\filesystem;
 
-$file_list = $filesystem->scandir(__DIR__ . DIRECTORY_SEPARATOR . 'java-sources', 'java');
+$file_list = $filesystem->scandir(__DIR__ . DIRECTORY_SEPARATOR . 'c-sources', 'c');
 $file_data = '';
 
 
@@ -27,7 +27,6 @@ foreach ($file_list as $file_path)
 
 //$chapin   = new rude\chapin($file_data);
 $halstead = new rude\halstead($file_data, count($file_list));
-$jilb     = new rude\jilb($file_data);
 $myers    = new rude\myers($file_data, count($file_list));
 
 ?>
@@ -37,32 +36,35 @@ $myers    = new rude\myers($file_data, count($file_list));
 	</head>
 
 	<body>
-		<div id="container">
-			<h2>Список файлов</h2>
+        <table>
+            <td>
+            <div id="container">
+                <h2>Список файлов</h2>
 
-			<label for="source"></label>
-			<textarea id="source"><? foreach ($file_list as $file_path) { echo $file_path . PHP_EOL; } ?></textarea>
+                <label for="source"></label>
+                <textarea id="source"><? foreach ($file_list as $file_path) { echo $file_path . PHP_EOL; } ?></textarea>
+            </td>
+            <td>
+                <div id = "metrics">
 
-			<div id="dictionary">
-				<? rude\html::table_horizontal($jilb->get_dictionary(), array('Токен', 'Найдено')) ?>
-			</div>
+                    <div id="halstead">
+                        <a>Метрика Холстеда</a>
+                        <? rude\html::table_horizontal($halstead->get_metrics(), array('Перменная', 'Значение')) ?>
+                    </div>
 
-			<div id="halstead">
-				<? rude\html::table($halstead->get_metrics(), array('Метрика', 'Значение', 'Описание')) ?>
-			</div>
+                    <div id="chapin">
+                        <a>Метрика Чепина</a>
+                        <? rude\html::table_horizontal($chapin_metrics, array('Переменная', 'Значение')) ?>
+                    </div>
 
-			<div id="chapin">
-				<? rude\html::table($chapin_metrics, array('Метрика', 'Значение', 'Описание')) ?>
-			</div>
+                    <div id="chapin">
+                        <a>Метрика Майерса</a>
+                        <? rude\html::table_horizontal($myers->get_metrics(),array('Переменная', 'Значение')) ?>
+                    </div>
+                </div>
+            </td>
 
-			<div id="total">
-				<? rude\html::table($jilb->get_loops(),      array('Операнд', 'Найдено')) ?>
-				<? rude\html::table($jilb->get_conditions(), array('Операнд', 'Найдено')) ?>
-			</div>
-
-			<div id="metrics">
-				<? rude\html::table($jilb->get_metrics(), array('Метрика', 'Значение', 'Описание')) ?>
-			</div>
-		</div>
+            </div>
+        </table>
 	</body>
 </html>

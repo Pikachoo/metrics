@@ -93,6 +93,17 @@ class regex
         return array();
     }
 
+    public  static  function  check_character($string)
+    {
+        if (preg_match_all('/[a-zA-Z0-9_]/sm', $string, $matches_words))
+        {
+//            ?><!--<pre>--><?//print_r($matches_words[0]) ?><!--</pre>--><?//
+            return $matches_words[0];
+        }
+
+        return array();
+    }
+
     public static function get_label_list(&$string, $goto_label)
     {
         if (preg_match_all('/'.$goto_label.'([\s]+|):/sm', $string, $matches_label))

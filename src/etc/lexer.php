@@ -95,6 +95,26 @@ class lexer
 		return $this->total_conditions;
 	}
 
+	public function count_returns()
+	{
+		$this->total_conditions = 0;
+		$this->conditions = array();
+
+		$this->conditions[] = array('return',      $this->count_tokens('return',      RUDE_RULE_STATEMENT_RETURN));
+
+		foreach ($this->conditions as $condition)
+		{
+			if (isset($condition[1]) && intval($condition[1]))
+			{
+				$this->total_conditions += intval($condition[1]);
+			}
+		}
+
+		$this->conditions[] = array('Всего', $this->total_conditions);
+
+		return $this->total_conditions;
+	}
+
 	public function source_count($item, $odd_list = array())
 	{
 		$count = substr_count($this->source, $item);
@@ -112,19 +132,6 @@ class lexer
 		$this->total_operators = 0;
 
 		$this->operators = array();
-
-//		foreach ($this->dictionary_operators as $operator)
-//		{
-//			$this->operators[] = array($operator, $this->count_tokens($operator));
-//		}
-//
-//		foreach ($this->operators as $operator)
-//		{
-//			if (isset($operator[1]) && intval($operator[1]))
-//			{
-//				$this->total_operators += intval($operator[1]);
-//			}
-//		}
 
 		$this->operators[] = array('+',   $this->source_count('+',  array('++', '+=')));
 		$this->operators[] = array('-',   $this->source_count('-',  array('--', '-=')));
@@ -175,12 +182,7 @@ class lexer
 		return $this->total_operators;
 	}
 
-	public function count_return()
-	{
 
-
-	}
-	
 	public function count_max_depth()
 	{
 //		$depth_cur = 0;

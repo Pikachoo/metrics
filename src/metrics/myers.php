@@ -11,8 +11,8 @@ class myers
 
 	private $lexer;
 
-	private $ev;  // число уникальных операторов программы, включая символы-разделители, имена процедур и знаки операций (словарь операторов)
-	private $p;
+	private $ZG;  // число уникальных операторов программы, включая символы-разделители, имена процедур и знаки операций (словарь операторов)
+	private $h;
 
 	public function __construct($file_data, $file_count)
 	{
@@ -22,8 +22,7 @@ class myers
 		$this->file_data = regex::erase_comments($this->file_data);
 		$this->file_data = regex::erase_strings($this->file_data);
 
-        $goto_count = $this->count_operators_GOTO();
-
+        $this->h = $this->count_predicate();
 
 		$this->lexer = new lexer($this->file_data);
 	}
@@ -32,14 +31,23 @@ class myers
 	{
 
 
-		$this->ev  = $this->lexer->count_conditions()+$this->lexer->count_loops();
-		$this->p  = $this->unique_operands();
+		$ev  = $this->lexer->count_conditions()+$this->lexer->count_loops()+$this->count_operators_GOTO();
+		$p  = $this->lexer->count_returns();
+
+        $this->ZG = $ev - 2*$p;
+        $this->h = $this->count_predicate();
 
 
-      //  $label_list = regex::get_label_list()
 
 
 		$metrics = array();
+
+
+		$metrics[] = array('Z(G)', $this->ZG);
+		$metrics[] = array('h',    $this->h,);
+		$metrics[] = array('[Z(G),Z(G)-h]',   '['.$this->ZG.','.($this->ZG-$this->h).']');
+
+		return $metrics;
 
 
 
@@ -78,6 +86,10 @@ class myers
             $match[] = $pos;
             $offset = $pos + strlen($find);
         }
+
+
+
+
 
         return $match;
     }
@@ -136,24 +148,170 @@ class myers
         }
 
 
-        ?><pre><? print_r($count) ?></pre><?
-        ?><pre><? print_r($array['goto_list']) ?></pre><?
-        ?><pre><? print_r($array['label_list']) ?></pre><?
 
 
         return $count;
 
 	}
 
-    public function parse_between($begin, $end)
+    public  function  get_positions_of_conditions($begin)
     {
-         
+        $position_list = $this->find_all_positions($this->file_data,$begin);
+
+        foreach($position_list as $key => $position )
+        {
+            if ((isset(regex::check_character($this->file_data[$position-1])[0]) == true )|| (isset(regex::check_character($this->file_data[$position+2])[0]) == true))
+            {
+                unset($position_list[$key]);
+            }
+
+        }
+//        ?><!--<pre>--><?// print_r($position_list) ?><!--</pre>--><?//
+        return $position_list;
 
     }
 
 
+
+    public function parse_between($begin)
+    {
+
+        $position_list = $this->get_positions_of_conditions($begin);
+
+        $predicates_list = array();
+
+        foreach ($position_list as $position)
+        {
+            $position += 2;
+            $character = $this->file_data[$position];
+            $opening_bracket = 0;
+            $closing_bracket = 0;
+            $predicate = "";
+
+            while(true)
+            {
+                if($character == '(')
+                {
+                    $opening_bracket++;
+                    $predicate .= $character;
+                    $position++;
+                    $character = $this->file_data[$position];
+                    break;
+                }
+                $position++;
+                if(isset($this->file_data[$position]))
+                    $character = $this->file_data[$position];
+
+            }
+
+
+            while(true)
+            {
+
+                if($character == '(')
+                {
+                    $opening_bracket++;
+                }
+
+                if($character == ')')
+                {
+                    $closing_bracket++;
+                }
+
+                $predicate .= $character;
+                $position++;
+
+                if(isset($this->file_data[$position]))
+                {
+                    $character = $this->file_data[$position];
+                }
+                else
+                    break;
+
+
+                if($closing_bracket == $opening_bracket)
+                    break;
+
+            }
+            $predicates_list[] = $predicate;
+        }
+//
+//        ?><!--<pre>--><?// print_r($predicates_list) ?><!--</pre>--><?//
+
+        return $predicates_list;
+
+    }
+
+    public function source_count($item, $source, $odd_list = array())
+    {
+        $count = substr_count($source, $item);
+        foreach ($odd_list as $odd)
+        {
+            $count -= substr_count($source, $odd);
+        }
+        return $count;
+    }
+
+    public function count_operators($source)
+    {
+        $total_operators = 0;
+
+        $operators = array();
+
+        $operators[] = array('<',   $this->source_count('<',  $source, array( '<=')));
+        $operators[] = array('>',   $this->source_count('>',  $source, array( '>=')));
+
+
+        $operators[] = array('>=',  $this->source_count('>=', $source));
+        $operators[] = array('<=',  $this->source_count('<=', $source));
+        $operators[] = array('==',  $this->source_count('==', $source));
+        $operators[] = array('!=',  $this->source_count('!=', $source));
+
+        sort($operators);
+
+
+        foreach ($operators as $operator)
+        {
+            if (isset($operator[1]))
+            {
+                $total_operators += intval($operator[1]);
+            }
+        }
+
+        return $total_operators;
+    }
+
     public  function  count_predicate()
     {
+
+        $predicate_list = $this->parse_between("if");
+        $h = 0;
+        foreach($predicate_list as $predicate)
+        {
+            $count = $this->count_operators($predicate);
+            if($count > 1)
+            {
+
+                $count--;
+                $h += $count;
+            }
+
+        }
+
+        $predicate_list = $this->parse_between("while");
+        foreach($predicate_list as $predicate)
+        {
+            $count = $this->count_operators($predicate);
+            if($count > 1)
+            {
+                $count--;
+                $h += $count;
+            }
+
+        }
+
+
+        return $h;
 
     }
 

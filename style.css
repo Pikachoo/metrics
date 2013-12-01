@@ -14,7 +14,15 @@ table, td, th
     font-family: Verdana, sans-serif;
     font-size: 11px;
 }
-
+textarea
+{
+    max-width: 400px;
+    width: 400px;
+    height: 199px;
+    margin-bottom: 5px;
+    border: 1px solid #bbb;
+    font-size: 10px;
+}
 #metrics td:nth-child(3)
 {
     text-align: left;
@@ -52,19 +60,11 @@ tbody
     border-color: inherit;
 }
 
-textarea
-{
-    max-width: 1135px;
-    width: 1135px;
-    height: 199px;
-    margin-bottom: 5px;
-    border: 1px solid #bbb;
-    font-size: 10px;
-}
+
 
 #container
 {
-    width: 1140px;
+    width: 400px;
 
     display: table;
     margin: 0 auto;
@@ -82,7 +82,7 @@ textarea
 
 #dictionary table
 {
-    width: 1135px;
+    width: 400px;
 }
 
 #halstead table,

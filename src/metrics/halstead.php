@@ -110,8 +110,6 @@ class halstead
 	{
 		$operators = $this->lexer->operators();
 
-//		?><!--<pre>--><?// print_r($operators) ?><!--</pre>--><?//
-
 		$counter = 0;
 		foreach ($operators as $operator)
 		{
