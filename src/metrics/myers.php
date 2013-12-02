@@ -112,7 +112,8 @@ class myers
 
             $labels = regex::get_label_list($this->file_data, $words[1]);
 
-            $item = $this->get_positions($labels)[0];
+            if(isset($this->get_positions($labels)[0]))
+                $item = $this->get_positions($labels)[0];
             $item['name'] = trim($item['name'],":");
 
             $label_list[] = array('name' => $item['name'], 'position' => $item['position']);

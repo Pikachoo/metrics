@@ -66,11 +66,11 @@ class halstead
 		$this->N_  = @floor($this->n1 * log($this->n1, 2) + $this->n2 * log($this->n2, 2));	// `N_ = n1*log2(n1) + n2*log2(n2)`
 		$this->V   = @floor($this->N  * log($this->n, 2));									// `V  = N*log2n`
 		$this->V_  = @floor($this->N_ * log($this->n_, 2));									// `V_ = N_*log2n_`
-		$this->L   = @round(($this->V_ * $this->file_count) / ($this->V*$this->file_count), 2);					// `L  = V_/V`
+		$this->L   = @round(($this->V_ ) / ($this->V ), 2);					// `L  = V_/V`
 		$this->L_  = @round((2 * $this->n2) / ($this->n1 * $this->N2), 2);					// `L_ = (2 n2)/ (n1*N2)`
-		$this->EC  = @floor($this->V / (2 * $this->L_ * $this->file_count));				// `EC = V/2L_`
-		$this->D   = @round(1 / ($this->L_ * $this->file_count), 2);						// `D  = 1/L_`
-		$this->y_  = @round($this->V / (2 * $this->D * $this->file_count), 2);				// `y_ = V/2D`
+		$this->EC  = @floor($this->V / (2 * $this->L_ ));				// `EC = V/2L_`
+		$this->D   = @round(1 / ($this->L_ ), 2);						// `D  = 1/L_`
+		$this->y_  = @round($this->V / (2 * $this->D ), 2);				// `y_ = V/2D`
 		$this->I   = @round($this->V / $this->D);											// `I  = V/D`
 		$this->E   = @round($this->N_ * log($this->n / $this->L, 2), 2);					// `E  = N_ * log2(n/L)`
 

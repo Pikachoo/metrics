@@ -76,6 +76,7 @@ class lexer
 		$this->total_conditions = 0;
 		$this->conditions = array();
 
+
 		$this->conditions[] = array('if',      $this->count_tokens('if',      RUDE_RULE_STATEMENT_IF));
 		$this->conditions[] = array('else',    $this->count_tokens('else',    RUDE_RULE_STATEMENT_ELSE));
 		$this->conditions[] = array('else if', $this->count_tokens('else if', RUDE_RULE_STATEMENT_ELSE_IF));
@@ -87,6 +88,7 @@ class lexer
 			if (isset($condition[1]) && intval($condition[1]))
 			{
 				$this->total_conditions += intval($condition[1]);
+
 			}
 		}
 
@@ -270,20 +272,23 @@ class lexer
 			 * `if` = count(`if`) - count(`else if`) *
 			\* ===================================== */
 			case RUDE_RULE_STATEMENT_IF:
-				return lexer::count($this->tokens, 'if') - $this->count_tokens('else if', RUDE_RULE_STATEMENT_ELSE_IF);
+//				return lexer::count($this->tokens, 'if') - $this->count_tokens('else if', RUDE_RULE_STATEMENT_ELSE_IF);
+                return lexer::count($this->tokens, 'if');
 				break;
 
 			/* ========================================= *\
 			 * `else` = count(`else`) - count(`else if`) *
 			\* ========================================= */
 			case RUDE_RULE_STATEMENT_ELSE:
-				return lexer::count($this->tokens, 'else') - $this->count_tokens('else if', RUDE_RULE_STATEMENT_ELSE_IF);
+//				return lexer::count($this->tokens, 'else') - $this->count_tokens('else if', RUDE_RULE_STATEMENT_ELSE_IF);
+                return lexer::count($this->tokens, 'else') ;
 				break;
 
 			/* ============================ *\
 			 * `else if` = count(`else if`) *
 			\* ============================ */
 			case RUDE_RULE_STATEMENT_ELSE_IF:
+                ?><pre><? print_r(substr_count($this->source, 'else if'))?></pre><?
 				return substr_count($this->source, 'else if');
 				break;
 

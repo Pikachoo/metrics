@@ -43,7 +43,8 @@ $myers    = new rude\myers($file_data, count($file_list));
                     <h2>Список файлов</h2>
 
                     <label for="source"></label>
-                    <textarea id="source"><? foreach ($file_list as $file_path) { echo $file_path . PHP_EOL; } ?></textarea>
+                    <textarea id="source"><?= htmlentities(\rude\filesystem::read('c-sources'.DIRECTORY_SEPARATOR.'source.c')); ?></textarea>
+<!--                    <textarea id="source">--><?// foreach ($file_list as $file_path) { echo $file_path . PHP_EOL; } ?><!--</textarea>-->
                 </td>
                 <td>
                     <div id = "metrics">
