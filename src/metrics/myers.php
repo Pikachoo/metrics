@@ -30,16 +30,11 @@ class myers
 	public function get_metrics()
 	{
 
-
-
-		$ev  = $this->lexer->count_conditions()+$this->lexer->count_loops()+$this->count_operators_GOTO();
+		$ev  = $this->lexer->count_conditions()+$this->lexer->count_loops()+$this->count_operators_GOTO()+$this->lexer->count_continue_and_break();
 		$p  = $this->lexer->count_returns();
 
         $this->ZG = $ev + 2*$p;
         $this->h = $this->count_predicate();
-
-
-
 
 		$metrics = array();
 
@@ -55,7 +50,8 @@ class myers
 		return $metrics;
 	}
 
-    public function  get_positions($list_of_name)
+
+    public function get_positions($list_of_name)
     {
 
         $list_of_name = array_unique($list_of_name);
@@ -74,6 +70,24 @@ class myers
             }
         }
         return $list;
+    }
+
+    public function get_positions_of_conditions($begin)
+    {
+        $position_list = $this->find_all_positions($this->file_data,$begin);
+
+        foreach($position_list as $key => $position )
+        {
+            $temp = regex::check_character($this->file_data[$position-1]);
+            $temp1 = regex::check_character($this->file_data[$position+2]);
+            if ((!empty($temp[0]) == true )|| (!empty($temp1[0]) == true))
+            {
+                unset($position_list[$key]);
+            }
+
+        }
+        return $position_list;
+
     }
 
     public function find_all_positions(&$string, &$find)
@@ -121,12 +135,10 @@ class myers
             $label_list[] = array('name' => $item['name'], 'position' => $item['position']);
         }
 
-//       ?><!--<pre>--><?// $label['position'] ?><!--</pre>--><?//
-
         return array('goto_list' => $goto_list, 'label_list' => $label_list);
    }
 
-public  function check_between_goto_and_label($goto,$label)
+    public function check_between_goto_and_label($goto,$label)
 {
         $position = $goto['position'];
         while($this->file_data[$position] != ';')
@@ -139,12 +151,9 @@ public  function check_between_goto_and_label($goto,$label)
 
         while($label['position'] != $position)
         {
-
-//            ?><!--<pre>--><?// print_r($this->file_data[$position]) ?><!--</pre>--><?////
 //
             if(isset(regex::check_character($this->file_data[$position])[0]) == true)
             {
-                echo "lalala";
                 return true;
             }
             $position++;
@@ -153,6 +162,7 @@ public  function check_between_goto_and_label($goto,$label)
         return false;
 
 }
+
 	public function count_operators_GOTO()
 	{
 
@@ -160,7 +170,6 @@ public  function check_between_goto_and_label($goto,$label)
 
         $count = 0;
 
-//        ?><!--<pre>--><?// $label['position'] ?><!--</pre>--><?//
         foreach ($array['goto_list'] as $goto)
         {
 
@@ -191,27 +200,6 @@ public  function check_between_goto_and_label($goto,$label)
         return $count;
 
 	}
-
-    public  function  get_positions_of_conditions($begin)
-    {
-        $position_list = $this->find_all_positions($this->file_data,$begin);
-
-        foreach($position_list as $key => $position )
-        {
-            $temp = regex::check_character($this->file_data[$position-1]);
-            $temp1 = regex::check_character($this->file_data[$position+2]);
-            if ((!empty($temp[0]) == true )|| (!empty($temp1[0]) == true))
-            {
-                unset($position_list[$key]);
-            }
-
-        }
-//        ?><!--<pre>--><?// print_r($position_list) ?><!--</pre>--><?//
-        return $position_list;
-
-    }
-
-
 
     public function parse_between($begin)
     {
@@ -275,14 +263,12 @@ public  function check_between_goto_and_label($goto,$label)
             }
             $predicates_list[] = $predicate;
         }
-//
-//        ?><!--<pre>--><?// print_r($predicates_list) ?><!--</pre>--><?//
 
-return $predicates_list;
+    return $predicates_list;
 
 }
 
-public function source_count($item, $source, $odd_list = array())
+    public function source_count($item, $source, $odd_list = array())
 {
     $count = substr_count($source, $item);
     foreach ($odd_list as $odd)
@@ -292,7 +278,7 @@ public function source_count($item, $source, $odd_list = array())
     return $count;
 }
 
-public function count_operators($source)
+    public function count_operators($source)
 {
     $total_operators = 0;
 
@@ -321,7 +307,7 @@ public function count_operators($source)
     return $total_operators;
 }
 
-public  function  count_predicate()
+    public function count_predicate()
 {
 
     $predicate_list = $this->parse_between("if");

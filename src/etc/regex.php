@@ -58,7 +58,6 @@ class regex
 		return array();
 	}
 
-
 	public static function comments_slashslash(&$string)
 	{
 		if (preg_match_all('#//(.*)$#m', $string, $matches_slashslash))
@@ -70,11 +69,10 @@ class regex
 		return array();
 	}
 
-    public  static function  get_goto_whith_label(&$string)
+    public static function  get_goto_whith_label(&$string)
     {
         if (preg_match_all('/(goto)(\s)(.*?)(?=;)/sm', $string, $matches_goto))
         {
-//            ?><!--<pre>--><?//print_r($matches_goto[0]) ?><!--</pre>--><?//
             return $matches_goto[0];
         }
 
@@ -82,22 +80,20 @@ class regex
 
     }
 
-    public  static  function  get_words_from_string($string)
+    public static function  get_words_from_string($string)
     {
         if (preg_match_all('/[a-zA-Z0-9]+/sm', $string, $matches_words))
         {
-//            ?><!--<pre>--><?//print_r($matches_words[0]) ?><!--</pre>--><?//
             return $matches_words[0];
         }
 
         return array();
     }
 
-    public  static  function  check_character($string)
+    public static function  check_character($string)
     {
         if (preg_match_all('/[a-zA-Z0-9_#]/sm', $string, $matches_words))
         {
-//            ?><!--<pre>--><?//print_r($matches_words[0]) ?><!--</pre>--><?//
             return $matches_words[0];
         }
 
@@ -108,7 +104,6 @@ class regex
     {
         if (preg_match_all('/'.$goto_label.'([\s]+|):/sm', $string, $matches_label))
         {
-//            ?><!--<pre>--><?//print_r($matches_label[0]) ?><!--</pre>--><?//
             return $matches_label[0];
         }
 

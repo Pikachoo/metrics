@@ -39,19 +39,12 @@ class halstead
 		$this->file_data = regex::erase_comments($this->file_data);
 		$this->file_data = regex::erase_strings($this->file_data);
 
-//		regex::get_goto_whith_label($this->file_data);
-//		regex::get_label_list($this->file_data,'label1');
-
 		$this->lexer = new lexer($this->file_data);
 
-//		?><!--<pre>--><?// print_r($this->file_tokens) ?><!--</pre>--><?//
 	}
 
 	public function get_metrics()
 	{
-//		$this->CL  = $this->lexer->total_conditions();
-//		$this->cl  = round($this->lexer->total_conditions() / ($this->lexer->total_loops() + $this->lexer->total_conditions()), 2);
-//		$this->CLI = $this->lexer->total_max_depth();
 
 
 		$this->n1  = $this->unique_operators();
@@ -97,7 +90,7 @@ class halstead
 		$metrics[] = array('y\'',             $this->y_,   'уровень языка выражения');
 		$metrics[] = array('I',               $this->I,    'информационное содержание программы, данная характеристика позволяет определить умственные затраты на создание программы');
 		$metrics[] = array('E',               $this->E,    'оценка необходимых интеллектуальных усилий при разработке программы, характеризующая число элементарных решений при написании программы');
-//
+
 		return $metrics;
 	}
 
@@ -141,7 +134,6 @@ class halstead
 
         $operands = array_unique($this->lexer->get_variables());
 		//$operands = array_unique($operands);
-		?><pre><?print_r($operands)?></pre><?
 
 //		sort($operands);
 
@@ -168,8 +160,6 @@ class halstead
 		}
 
 		sort($operands);
-
-//		?><!--<pre>--><?// print_r($operands) ?><!--</pre>--><?//
 
 		return count($operands);
 	}

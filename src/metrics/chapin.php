@@ -67,8 +67,6 @@ class chapin
 			}
 		}
 
-//		?><!--<pre>--><?// print_r($unused) ?><!--</pre>--><?//
-
 		return $used;
 	}
 
@@ -95,14 +93,10 @@ class chapin
 		return $unused;
 	}
 
-
-
 	public function count_unused()
 	{
 		return count($this->get_unused());
 	}
-
-
 
 	public function count_variables()
 	{

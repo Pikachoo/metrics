@@ -40,7 +40,7 @@ class lexer
 //		$this->count_operators();
 //		$this->count_loops();
 
-		$this->count_max_depth();
+//		$this->count_max_depth();
 
 		$this->dictionary = array_merge($this->dictionary_operators, $this->dictionary_conditions, $this->dictionary_loops);
 	}
@@ -49,6 +49,40 @@ class lexer
 	{
 		return token_get_all('<? ' . $string . ' ?>');
 	}
+
+	public function count_continue_and_break()
+    {
+        $total_continue_and_break = 0;
+
+		$continue_and_break[] = array('continue',      $this->count_tokens('continue'));
+   		$continue_and_break[] = array('break',    $this->count_tokens('break'));
+
+		$case_list[] = array('case', $this->count_tokens('case',  RUDE_RULE_STATEMENT_CASE));
+
+
+        foreach ($continue_and_break as $loop)
+		{
+			if (isset($loop[1]) && intval($loop[1]))
+			{
+				$total_continue_and_break+= intval($loop[1]);
+			}
+		}
+		foreach ($case_list as $case)
+		{
+		    if (isset($case[1]) && intval($case[1]))
+			{
+				$total_continue_and_break-= intval($case[1]);
+			}
+
+		}
+
+		$continue_and_break[] = array('Всего', $total_continue_and_break);
+
+
+
+		return $total_continue_and_break;
+
+    }
 
 	public function count_loops()
 	{
@@ -185,104 +219,47 @@ class lexer
 				$this->total_operators += intval($operator[1]);
 			}
 		}
-//        ?><!--<pre>--><?//print_r($this->total_operators)?><!--</pre>--><?//
 		return $this->total_operators;
 	}
 
-
-	public function count_max_depth()
-	{
-//		$depth_cur = 0;
-//		$depth_max = -INF;
-
-
-		/* ======================================= *\
-		 * Crazy multiline `if () { ... }` pattern *
-		 * ======================================= *
-		 * if (statement) {                        *
-		 *     ...                                 *
-		 * }                                       *
-		\* ======================================= */
-
-//		$regex = "if\\s*\\(((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^\\(\\)]|\\((?1)\\))*+)\\)\\s*{((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^{}]|{(?2)})*+)}\\s*(?:(?:else\\s*{((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^{}]|{(?3)})*+)}\\s*)|(?:else\\s*if\\s*\\(((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^\\(\\)]|\\((?4)\\))*+)\\)\\s*{((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^{}]|{(?5)})*+)}\\s*))*";
-
-//		preg_match_all('#' . $regex. '#xm', $code, $matches);
-
-//		?><!--<pre>--><?// print_r($code) ?><!--</pre>--><?//
-
-//		$code = str_replace($matches[0], '', $code);
-
-//		?><!--<pre>--><?// print_r($matches[0]) ?><!--</pre>--><?//
-
-
-		/* ====================================== *\
-		 * Singleline `if () { ... }` pattern     *
-		 * ====================================== *
-		 * if (statement) { ... }                 *
-		\* ====================================== */
-
-//		$regex = "[^a-zA-Z](if|else if)(.*)\\((.*)\\)(.*)";
-//		preg_match_all('#' . $regex. '#xm', $code, $matches);
-//		?><!--<pre>--><?// print_r($matches[0]) ?><!--</pre>--><?//
-
-		/* ====================================== *\
-		 * Crazy multiline `if () { ... } pattern *
-		 * ====================================== *
-		 * if (statement) {                       *
-		 *     ...                                *
-		 * }                                      *
-		\* ====================================== */
-//		echo $regex = "if\\s*\\(((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^\\(\\)]|\\((?1)\\))*+)\\)\\s*{((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\'(?:(?:\\\\\')|[^\'])*\'))|[^{}]|{(?2)})*+)}\\s*(?:(?:else\\s*{((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^{}]|{(?3)})*+)}\\s*)|(?:else\\s*if\\s*\\(((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^\\(\\)]|\\((?4)\\))*+)\\)\\s*{((?:(?:(?:\"(?:(?:\\\\\")|[^\"])*\")|(?:\\'(?:(?:\\\\\\')|[^\\'])*\\'))|[^{}]|{(?5)})*+)}\\s*))*";
-//
-//		preg_match_all('#' . $regex. '#xm', $this->file_data, $matches);
-
-
-
-
-
-//		$regex = "if\\s*\\(([^\\(\\)]|\\s)*\\)\\s*{(.|\\s)*?}";
-//		preg_match_all('#' . $regex. '#xm', $this->file_data, $matches);
-
-
-//		?><!--<pre>--><?// print_r($matches[0]) ?><!--</pre>--><?//
-
-//		$this->total_max_depth = $depth_max;
-	}
-public function get_variables()
+    public function get_variables()
 {
-$reserved_words = array('abstract',   'bool', 'assert',            'boolean',    'break',    'byte',      'case',  'catch', 'char',    'class', 'const', 'continue', 'default',
-    'double',     'do',                'else',       'enum',     'extends',   'false', 'final', 'finally', 'float', 'for',   'goto',     'if',
-    'implements', 'import',            'instanceof', 'int',      'interface', 'long',
-    'native',     'new',               'null',       'package',  'private',   'protected',
-    'public',     'return',            'short',      'static',   'strictfp',  'super',
-    'switch',     'synchronized	this', 'throw',      'throws',   'transient',
-    'true',       'try',               'void',       'volatile', 'while',
-    '(Boolean)',  '(int)',             'Object');
+    $reserved_words = array
+                      ('abstract',  'bool', 'assert',  'boolean',   'break',    'byte',
+                       'case',  'catch', 'char',    'class',    'const',   'continue',
+                       'default','double', 'do',   'else', 'enum',     'extends',
+                       'false', 'final', 'finally', 'float', 'for',   'goto',  'if',
+                       'implements', 'import',  'instanceof', 'int',      'interface', 'long',
+                       'native',     'new', 'null', 'package',  'private',   'protected',
+                       'public',     'return',            'short',  'static',   'strictfp',  'super',
+                       'switch',     'synchronized	this', 'throw',      'throws',   'transient',
+                       'true',       'try',               'void',       'volatile', 'while',
+                       '(Boolean)',  '(int)',             'Object');
 
-$operand_list = $this->get_operands();
+    $operand_list = $this->get_operands();
 
 
-$variables = array();
+    $variables = array();
 
-foreach ($operand_list as $operand)
-{
-    if (in_array($operand, $reserved_words))
+    foreach ($operand_list as $operand)
     {
-        continue;
+        if (in_array($operand, $reserved_words))
+        {
+            continue;
+        }
+
+        if (is_numeric($operand))
+        {
+            continue;
+        }
+
+
+        $variables[] = $operand;
     }
-
-    if (is_numeric($operand))
-    {
-        continue;
-    }
-
-
-    $variables[] = $operand;
+	return $variables;
 }
-//?><!--<pre>--><?//print_r($variables)?><!--</pre>--><?//
-		return $variables;
-	}
-	public function get_operands()
+
+    public function get_operands()
 	{
 		$operands = array();
 
@@ -300,6 +277,7 @@ foreach ($operand_list as $operand)
 
 		return $operands;
 	}
+
 	private function count_tokens($token_value, $RUDE_RULE = false)
 	{
 		if (!$RUDE_RULE)
