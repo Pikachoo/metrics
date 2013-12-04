@@ -97,7 +97,7 @@ class halstead
 		$metrics[] = array('y\'',             $this->y_,   'уровень языка выражения');
 		$metrics[] = array('I',               $this->I,    'информационное содержание программы, данная характеристика позволяет определить умственные затраты на создание программы');
 		$metrics[] = array('E',               $this->E,    'оценка необходимых интеллектуальных усилий при разработке программы, характеризующая число элементарных решений при написании программы');
-
+//
 		return $metrics;
 	}
 
@@ -108,18 +108,21 @@ class halstead
 
 	public function unique_operators()
 	{
-		$operators = $this->lexer->operators();
+		$operators = $this->lexer->count_operators();
 
-		$counter = 0;
-		foreach ($operators as $operator)
-		{
-			if (isset($operator[1]) && intval($operator[1] != 0))
-			{
-				$counter++;
-			}
-		}
+//		$counter = 0;
+//
+//
+//		foreach ($operators as $operator)
+//		{
+//
+//			if (isset($operator[1]) && intval($operator[1] != 0))
+//			{
+//				$counter++;
+//			}
+//		}
 
-		return $counter;
+		return $operators;
 	}
 
 	public function unique_operands()
@@ -136,9 +139,11 @@ class halstead
 			}
 		}
 
-		$operands = array_unique($operands);
+        $operands = array_unique($this->lexer->get_variables());
+		//$operands = array_unique($operands);
+		?><pre><?print_r($operands)?></pre><?
 
-		sort($operands);
+//		sort($operands);
 
 		return count($operands);
 	}

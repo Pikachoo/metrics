@@ -31,7 +31,7 @@ class chapin
 
 	public function get_metrics()
 	{
-		$this->P = $this->count_variables();         // P — вводимые переменные для расчетов и для обеспечения вывода
+		$this->P =$this->count_variables();         // P — вводимые переменные для расчетов и для обеспечения вывода
 		$this->M = $this->count_used();              // M — модифицируемые, или создаваемые внутри программы переменные
 		$this->C = $this->lexer->count_conditions(); // C — переменные, участвующие в управлении работой программного модуля (управляющие переменные)
 		$this->T = $this->count_unused();            // T — не используемые в программе («паразитные») переменные
@@ -50,28 +50,11 @@ class chapin
 		return $metrics;
 	}
 
-	public function get_operands()
-	{
-		$operands = array();
 
-		foreach ($this->lexer->operands() as $operand)
-		{
-			preg_match_all('/[a-zA-Z0-9]/xsm', $operand, $matches);
-
-			if ($matches[0])
-			{
-				$operands[] = $operand;
-			}
-		}
-
-		sort($operands);
-
-		return $operands;
-	}
 
 	public function get_used()
 	{
-		$variables = array_count_values($this->get_variables());
+		$variables = array_count_values($this->lexer->get_variables());
 
 
 		$used = array();
@@ -96,7 +79,7 @@ class chapin
 
 	public function get_unused()
 	{
-		$variables = array_count_values($this->get_variables());
+		$variables = array_count_values($this->lexer->get_variables());
 
 
 		$unused = array();
@@ -119,43 +102,11 @@ class chapin
 		return count($this->get_unused());
 	}
 
-	public function get_variables()
-	{
-		$reserved_words = array('abstract',   'assert',            'boolean',    'break',    'byte',      'case',  'catch', 'char',    'class', 'const', 'continue', 'default',
-			'double',     'do',                'else',       'enum',     'extends',   'false', 'final', 'finally', 'float', 'for',   'goto',     'if',
-			'implements', 'import',            'instanceof', 'int',      'interface', 'long',
-			'native',     'new',               'null',       'package',  'private',   'protected',
-			'public',     'return',            'short',      'static',   'strictfp',  'super',
-			'switch',     'synchronized	this', 'throw',      'throws',   'transient',
-			'true',       'try',               'void',       'volatile', 'while',
-			'(Boolean)',  '(int)',             'Object');
 
-		$operand_list = $this->get_operands();
-
-
-		$variables = array();
-
-		foreach ($operand_list as $operand)
-		{
-			if (in_array($operand, $reserved_words))
-			{
-				continue;
-			}
-
-			if (is_numeric($operand))
-			{
-				continue;
-			}
-
-
-			$variables[] = $operand;
-		}
-
-		return $variables;
-	}
 
 	public function count_variables()
 	{
-		return count($this->get_variables());
+
+		return count( array_unique($this->lexer->get_variables()));
 	}
 }

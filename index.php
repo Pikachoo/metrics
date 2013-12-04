@@ -40,7 +40,7 @@ $myers    = new rude\myers($file_data, count($file_list));
             <table >
                 <td>
                 <div id="container">
-                    <h2>Список файлов</h2>
+                    <h2>Файл</h2>
 
                     <label for="source"></label>
                     <textarea id="source"><?= htmlentities(\rude\filesystem::read('c-sources'.DIRECTORY_SEPARATOR.'source.c')); ?></textarea>

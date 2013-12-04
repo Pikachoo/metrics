@@ -36,9 +36,9 @@ class lexer
 
 		$this->tokens = $this->tokenize($this->source);
 
-		$this->count_conditions();
-		$this->count_operators();
-		$this->count_loops();
+	//	$this->count_conditions();
+//		$this->count_operators();
+//		$this->count_loops();
 
 		$this->count_max_depth();
 
@@ -55,10 +55,11 @@ class lexer
 		$this->total_loops = 0;
 
 		$this->loops[] = array('for',      $this->count_tokens('for'));
-		$this->loops[] = array('while',    $this->count_tokens('while',    RUDE_RULE_LOOP_WHILE));
+   		$this->loops[] = array('while',    $this->count_tokens('while',    RUDE_RULE_LOOP_WHILE));
 		$this->loops[] = array('do while', $this->count_tokens('do while', RUDE_RULE_LOOP_DO_WHILE));
 
-		foreach ($this->loops as $loop)
+
+        foreach ($this->loops as $loop)
 		{
 			if (isset($loop[1]) && intval($loop[1]))
 			{
@@ -68,6 +69,8 @@ class lexer
 
 		$this->loops[] = array('Всего', $this->total_loops);
 
+
+
 		return $this->total_loops;
 	}
 	
@@ -75,6 +78,7 @@ class lexer
 	{
 		$this->total_conditions = 0;
 		$this->conditions = array();
+
 
 
 		$this->conditions[] = array('if',      $this->count_tokens('if',      RUDE_RULE_STATEMENT_IF));
@@ -136,6 +140,7 @@ class lexer
 		$this->operators = array();
 
 		$this->operators[] = array('+',   $this->source_count('+',  array('++', '+=')));
+
 		$this->operators[] = array('-',   $this->source_count('-',  array('--', '-=')));
 		$this->operators[] = array('/',   $this->source_count('/',  array('/=')));
 		$this->operators[] = array('%',   $this->source_count('%',  array('%=')));
@@ -180,7 +185,7 @@ class lexer
 				$this->total_operators += intval($operator[1]);
 			}
 		}
-
+//        ?><!--<pre>--><?//print_r($this->total_operators)?><!--</pre>--><?//
 		return $this->total_operators;
 	}
 
@@ -243,7 +248,58 @@ class lexer
 
 //		$this->total_max_depth = $depth_max;
 	}
+public function get_variables()
+{
+$reserved_words = array('abstract',   'bool', 'assert',            'boolean',    'break',    'byte',      'case',  'catch', 'char',    'class', 'const', 'continue', 'default',
+    'double',     'do',                'else',       'enum',     'extends',   'false', 'final', 'finally', 'float', 'for',   'goto',     'if',
+    'implements', 'import',            'instanceof', 'int',      'interface', 'long',
+    'native',     'new',               'null',       'package',  'private',   'protected',
+    'public',     'return',            'short',      'static',   'strictfp',  'super',
+    'switch',     'synchronized	this', 'throw',      'throws',   'transient',
+    'true',       'try',               'void',       'volatile', 'while',
+    '(Boolean)',  '(int)',             'Object');
 
+$operand_list = $this->get_operands();
+
+
+$variables = array();
+
+foreach ($operand_list as $operand)
+{
+    if (in_array($operand, $reserved_words))
+    {
+        continue;
+    }
+
+    if (is_numeric($operand))
+    {
+        continue;
+    }
+
+
+    $variables[] = $operand;
+}
+//?><!--<pre>--><?//print_r($variables)?><!--</pre>--><?//
+		return $variables;
+	}
+	public function get_operands()
+	{
+		$operands = array();
+
+		foreach ($this->operands() as $operand)
+		{
+			preg_match_all('/[a-zA-Z0-9]/xsm', $operand, $matches);
+
+			if ($matches[0])
+			{
+				$operands[] = $operand;
+			}
+		}
+
+		sort($operands);
+
+		return $operands;
+	}
 	private function count_tokens($token_value, $RUDE_RULE = false)
 	{
 		if (!$RUDE_RULE)
@@ -288,7 +344,6 @@ class lexer
 			 * `else if` = count(`else if`) *
 			\* ============================ */
 			case RUDE_RULE_STATEMENT_ELSE_IF:
-                ?><pre><? print_r(substr_count($this->source, 'else if'))?></pre><?
 				return substr_count($this->source, 'else if');
 				break;
 

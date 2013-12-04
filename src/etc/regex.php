@@ -95,7 +95,7 @@ class regex
 
     public  static  function  check_character($string)
     {
-        if (preg_match_all('/[a-zA-Z0-9_]/sm', $string, $matches_words))
+        if (preg_match_all('/[a-zA-Z0-9_#]/sm', $string, $matches_words))
         {
 //            ?><!--<pre>--><?//print_r($matches_words[0]) ?><!--</pre>--><?//
             return $matches_words[0];

@@ -31,10 +31,11 @@ class myers
 	{
 
 
+
 		$ev  = $this->lexer->count_conditions()+$this->lexer->count_loops()+$this->count_operators_GOTO();
 		$p  = $this->lexer->count_returns();
 
-        $this->ZG = $ev - 2*$p;
+        $this->ZG = $ev + 2*$p;
         $this->h = $this->count_predicate();
 
 
@@ -45,7 +46,7 @@ class myers
 
 		$metrics[] = array('Z(G)', $this->ZG);
 		$metrics[] = array('h',    $this->h,);
-		$metrics[] = array('[Z(G),Z(G)-h]',   '['.$this->ZG.','.($this->ZG-$this->h).']');
+		$metrics[] = array('[Z(G),Z(G)+h]',   '['.$this->ZG.','.($this->ZG+$this->h).']');
 
 		return $metrics;
 
@@ -101,6 +102,7 @@ class myers
 
         $label_list = array();
 
+
         foreach ($goto_list as &$goto)
         {
             $words = regex::get_words_from_string($goto['name']);
@@ -111,23 +113,54 @@ class myers
             $goto['name'] = $words[1];
 
             $labels = regex::get_label_list($this->file_data, $words[1]);
-
-            if(isset($this->get_positions($labels)[0]))
-                $item = $this->get_positions($labels)[0];
+            $temp = $this->get_positions($labels);
+            if(!empty($temp[0]))
+                $item = $temp[0];
             $item['name'] = trim($item['name'],":");
 
             $label_list[] = array('name' => $item['name'], 'position' => $item['position']);
         }
 
+//       ?><!--<pre>--><?// $label['position'] ?><!--</pre>--><?//
+
         return array('goto_list' => $goto_list, 'label_list' => $label_list);
    }
 
+public  function check_between_goto_and_label($goto,$label)
+{
+        $position = $goto['position'];
+        while($this->file_data[$position] != ';')
+        {
+            $position++;
+        }
+
+        $position++;
+
+
+        while($label['position'] != $position)
+        {
+
+//            ?><!--<pre>--><?// print_r($this->file_data[$position]) ?><!--</pre>--><?////
+//
+            if(isset(regex::check_character($this->file_data[$position])[0]) == true)
+            {
+                echo "lalala";
+                return true;
+            }
+            $position++;
+
+        }
+        return false;
+
+}
 	public function count_operators_GOTO()
 	{
 
         $array = $this->get_label_and_goto_lists();
 
         $count = 0;
+
+//        ?><!--<pre>--><?// $label['position'] ?><!--</pre>--><?//
         foreach ($array['goto_list'] as $goto)
         {
 
@@ -135,14 +168,18 @@ class myers
             {
                 if($goto['name'] == $label['name'])
                 {
+
+                    if($this->check_between_goto_and_label($goto,$label) == false)
+                        continue;
                     if($goto['position'] < $label['position'])
                     {
                         $count += 2;
                     }
-                    else
+                    else if($goto['position'] > $label['position'])
                     {
                         $count++;
                     }
+
                 }
             }
 
@@ -161,7 +198,9 @@ class myers
 
         foreach($position_list as $key => $position )
         {
-            if ((isset(regex::check_character($this->file_data[$position-1])[0]) == true )|| (isset(regex::check_character($this->file_data[$position+2])[0]) == true))
+            $temp = regex::check_character($this->file_data[$position-1]);
+            $temp1 = regex::check_character($this->file_data[$position+2]);
+            if ((!empty($temp[0]) == true )|| (!empty($temp1[0]) == true))
             {
                 unset($position_list[$key]);
             }
@@ -239,82 +278,82 @@ class myers
 //
 //        ?><!--<pre>--><?// print_r($predicates_list) ?><!--</pre>--><?//
 
-        return $predicates_list;
+return $predicates_list;
 
-    }
+}
 
-    public function source_count($item, $source, $odd_list = array())
+public function source_count($item, $source, $odd_list = array())
+{
+    $count = substr_count($source, $item);
+    foreach ($odd_list as $odd)
     {
-        $count = substr_count($source, $item);
-        foreach ($odd_list as $odd)
-        {
-            $count -= substr_count($source, $odd);
-        }
-        return $count;
+        $count -= substr_count($source, $odd);
     }
+    return $count;
+}
 
-    public function count_operators($source)
+public function count_operators($source)
+{
+    $total_operators = 0;
+
+    $operators = array();
+
+    $operators[] = array('<',   $this->source_count('<',  $source, array( '<=')));
+    $operators[] = array('>',   $this->source_count('>',  $source, array( '>=')));
+
+
+    $operators[] = array('>=',  $this->source_count('>=', $source));
+    $operators[] = array('<=',  $this->source_count('<=', $source));
+    $operators[] = array('==',  $this->source_count('==', $source));
+    $operators[] = array('!=',  $this->source_count('!=', $source));
+
+    sort($operators);
+
+
+    foreach ($operators as $operator)
     {
-        $total_operators = 0;
-
-        $operators = array();
-
-        $operators[] = array('<',   $this->source_count('<',  $source, array( '<=')));
-        $operators[] = array('>',   $this->source_count('>',  $source, array( '>=')));
-
-
-        $operators[] = array('>=',  $this->source_count('>=', $source));
-        $operators[] = array('<=',  $this->source_count('<=', $source));
-        $operators[] = array('==',  $this->source_count('==', $source));
-        $operators[] = array('!=',  $this->source_count('!=', $source));
-
-        sort($operators);
-
-
-        foreach ($operators as $operator)
+        if (isset($operator[1]))
         {
-            if (isset($operator[1]))
-            {
-                $total_operators += intval($operator[1]);
-            }
+            $total_operators += intval($operator[1]);
         }
-
-        return $total_operators;
     }
 
-    public  function  count_predicate()
+    return $total_operators;
+}
+
+public  function  count_predicate()
+{
+
+    $predicate_list = $this->parse_between("if");
+    $h = 0;
+    foreach($predicate_list as $predicate)
     {
-
-        $predicate_list = $this->parse_between("if");
-        $h = 0;
-        foreach($predicate_list as $predicate)
+        $count = $this->count_operators($predicate);
+        if($count > 1)
         {
-            $count = $this->count_operators($predicate);
-            if($count > 1)
-            {
 
-                $count--;
-                $h += $count;
-            }
-
+            $count--;
+            $h += $count;
         }
-
-        $predicate_list = $this->parse_between("while");
-        foreach($predicate_list as $predicate)
-        {
-            $count = $this->count_operators($predicate);
-            if($count > 1)
-            {
-                $count--;
-                $h += $count;
-            }
-
-        }
-
-
-        return $h;
 
     }
+
+    $predicate_list = $this->parse_between("while");
+    foreach($predicate_list as $predicate)
+    {
+        $count = $this->count_operators($predicate);
+        if($count > 1)
+        {
+            $count--;
+            $h += $count;
+        }
+
+    }
+
+
+    return $h;
+
+}
 
 
 
